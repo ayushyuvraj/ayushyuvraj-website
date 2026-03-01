@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ayush Yuvraj — AI Product Leader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080808;
+    --deep: #0d0d0d;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --gold: #c9a84c;
+    --gold-dim: #8a6c2f;
+    --gold-glow: rgba(201,168,76,0.10);
+    --white: #f0ede8;
+    --gray: #6b6660;
+    --gray-light: #a39e98;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black); color: var(--white);
+    font-family: 'Instrument Sans', sans-serif; font-size: 16px;
+    line-height: 1.6; overflow-x: hidden; cursor: none;
+  }
+  .cursor {
+    position: fixed; width: 8px; height: 8px; background: var(--gold);
+    border-radius: 50%; pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed; width: 32px; height: 32px;
+    border: 1px solid rgba(201,168,76,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%); transition: all 0.18s ease;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 8000; opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 28px 64px; display: flex; justify-content: space-between; align-items: center;
+    transition: background 0.4s, border-color 0.4s, padding 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+  nav.scrolled { background: rgba(8,8,8,0.94); backdrop-filter: blur(24px); border-bottom-color: var(--border); padding: 20px 64px; }
+  .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; letter-spacing: 0.08em; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 44px; list-style: none; }
+  .nav-links a { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color 0.3s; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; right: 0; height: 1px; background: var(--gold); transform: scaleX(0); transition: transform 0.3s; transform-origin: left; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* HERO */
+  .hero { min-height: 100vh; display: flex; align-items: center; padding: 140px 64px 100px; position: relative; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 55% 70% at 68% 50%, rgba(201,168,76,0.07) 0%, transparent 65%); }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(201,168,76,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 75% 75% at 68% 50%, black 0%, transparent 68%);
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 1100px; width: 100%; }
+  .hero-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 36px; opacity: 0; animation: fadeUp 0.8s ease 0.15s forwards; }
+  .hero-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(60px, 9vw, 116px); font-weight: 300; line-height: 0.92; letter-spacing: -0.025em; margin-bottom: 28px; opacity: 0; animation: fadeUp 0.8s ease 0.35s forwards; }
+  .hero-name em { font-style: italic; color: var(--gold); }
+  .hero-subtitle { font-size: clamp(15px, 1.8vw, 20px); color: var(--gray-light); max-width: 520px; line-height: 1.75; margin-bottom: 60px; opacity: 0; animation: fadeUp 0.8s ease 0.55s forwards; }
+  .hero-stats { display: flex; gap: 56px; margin-bottom: 60px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.8s ease 0.75s forwards; }
+  .stat { border-left: 1px solid var(--gold-dim); padding-left: 20px; }
+  .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 300; color: var(--gold); line-height: 1; }
+  .stat-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray); margin-top: 7px; }
+  .hero-cta { display: flex; gap: 24px; align-items: center; opacity: 0; animation: fadeUp 0.8s ease 0.95s forwards; }
+  .btn-primary { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--black); background: var(--gold); padding: 15px 36px; text-decoration: none; transition: all 0.3s; display: inline-block; }
+  .btn-primary:hover { background: #dbb95a; transform: translateY(-1px); }
+  .btn-ghost { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gray-light); text-decoration: none; padding: 15px 24px; border: 1px solid var(--border); transition: all 0.3s; }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* SECTIONS */
+  section { padding: 128px 64px; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(38px, 4.5vw, 60px); font-weight: 300; line-height: 1.08; margin-bottom: 64px; }
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  /* ABOUT */
+  .about { background: var(--deep); }
+  .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 100px; align-items: start; max-width: 1200px; }
+  .about-text p { color: var(--gray-light); line-height: 1.92; font-size: 16px; margin-bottom: 22px; }
+  .about-text p strong { color: var(--white); font-weight: 600; }
+  .detail-item { display: flex; justify-content: space-between; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .detail-item:first-child { border-top: 1px solid var(--border); }
+  .detail-key { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray); flex-shrink: 0; margin-right: 20px; }
+  .detail-value { font-size: 14px; color: var(--white); text-align: right; }
+  .detail-value a { color: var(--gold); text-decoration: none; }
+
+  /* EXPERTISE */
+  .expertise { background: var(--black); }
+  .expertise-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; max-width: 1200px; }
+  .expertise-card { background: var(--surface); padding: 44px 36px; position: relative; overflow: hidden; transition: background 0.35s; }
+  .expertise-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--gold); transform: scaleX(0); transition: transform 0.4s; transform-origin: left; }
+  .expertise-card:hover { background: #131313; }
+  .expertise-card:hover::before { transform: scaleX(1); }
+  .expertise-num { font-family: 'Cormorant Garamond', serif; font-size: 56px; font-weight: 300; color: #1c1c1c; line-height: 1; margin-bottom: 20px; transition: color 0.3s; }
+  .expertise-card:hover .expertise-num { color: rgba(201,168,76,0.13); }
+  .expertise-name { font-size: 17px; font-weight: 600; margin-bottom: 14px; }
+  .expertise-desc { font-size: 13px; color: var(--gray); line-height: 1.85; }
+  .expertise-tags { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; padding: 5px 11px; border: 1px solid var(--border); color: var(--gray); transition: all 0.3s; }
+  .expertise-card:hover .tag { border-color: var(--gold-dim); color: var(--gold); }
+
+  /* PROJECTS */
+  .projects { background: var(--deep); }
+  .projects-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; max-width: 1200px; }
+  .projects-header-text { flex: 1; }
+  .github-link { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray); text-decoration: none; border: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; gap: 10px; transition: all 0.3s; white-space: nowrap; margin-left: 48px; align-self: flex-end; }
+  .github-link:hover { border-color: var(--gold); color: var(--gold); }
+  .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; max-width: 1200px; }
+  .project-card { background: var(--surface); padding: 40px 36px; position: relative; overflow: hidden; transition: all 0.35s; display: flex; flex-direction: column; }
+  .project-card.featured-proj { grid-column: span 2; }
+  .project-card::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 85% 85%, rgba(201,168,76,0.07) 0%, transparent 55%); opacity: 0; transition: opacity 0.4s; }
+  .project-card:hover::after { opacity: 1; }
+  .project-card:hover { background: #131313; }
+  .project-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .project-num { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--gold-dim); }
+  .project-status { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; }
+  .status-live { background: rgba(34,197,94,0.08); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+  .status-complete { background: rgba(201,168,76,0.08); color: var(--gold); border: 1px solid rgba(201,168,76,0.2); }
+  .status-strategy { background: rgba(99,102,241,0.08); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+  .project-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; line-height: 1.25; margin-bottom: 14px; }
+  .project-card.featured-proj .project-title { font-size: 30px; }
+  .project-desc { font-size: 13px; color: var(--gray); line-height: 1.8; flex: 1; }
+  .project-stack { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 7px; }
+  .stack-tag { font-family: 'DM Mono', monospace; font-size: 9px; padding: 4px 10px; border: 1px solid var(--border); color: var(--gray); letter-spacing: 0.05em; transition: all 0.3s; }
+  .project-card:hover .stack-tag { border-color: #2a2a2a; color: var(--gray-light); }
+  .project-footer { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .project-link { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: gap 0.2s; }
+  .project-link:hover { gap: 12px; }
+  .project-type { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); }
+
+  /* EXPERIENCE */
+  .experience { background: var(--black); }
+  .timeline { max-width: 860px; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--gold), rgba(201,168,76,0.1) 80%, transparent); }
+  .timeline-item { padding-left: 52px; margin-bottom: 76px; position: relative; opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .timeline-item.visible { opacity: 1; transform: translateY(0); }
+  .timeline-dot { position: absolute; left: -4.5px; top: 10px; width: 10px; height: 10px; background: var(--gold); border-radius: 50%; border: 2px solid var(--black); box-shadow: 0 0 16px rgba(201,168,76,0.7); }
+  .timeline-period { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; }
+  .timeline-role { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; margin-bottom: 5px; }
+  .timeline-company { font-size: 13px; color: var(--gray); margin-bottom: 20px; }
+  .timeline-company span { color: var(--gold); }
+  .timeline-achievements { display: flex; flex-direction: column; gap: 11px; }
+  .achievement { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--gray-light); line-height: 1.72; }
+  .achievement::before { content: '◆'; color: var(--gold); font-size: 7px; margin-top: 5px; flex-shrink: 0; }
+
+  /* WRITING */
+  .writing { background: var(--deep); }
+  .article-card { max-width: 1200px; border: 1px solid var(--border); padding: 72px; position: relative; overflow: hidden; transition: border-color 0.35s; }
+  .article-card:hover { border-color: var(--gold-dim); }
+  .article-card::before { content: '"'; position: absolute; top: 10px; right: 56px; font-family: 'Cormorant Garamond', serif; font-size: 220px; font-weight: 300; color: rgba(201,168,76,0.035); line-height: 1; pointer-events: none; }
+  .article-eyebrow { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+  .article-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(26px, 3.2vw, 44px); font-weight: 300; line-height: 1.18; max-width: 680px; margin-bottom: 24px; }
+  .article-excerpt { font-size: 15px; color: var(--gray-light); line-height: 1.9; max-width: 660px; margin-bottom: 44px; }
+  .article-link { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); text-decoration: none; display: inline-flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--gold-dim); padding-bottom: 4px; transition: gap 0.2s, border-color 0.2s; }
+  .article-link:hover { gap: 14px; border-color: var(--gold); }
+
+  /* SKILLS */
+  .skills { background: var(--black); }
+  .skills-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 48px; max-width: 1200px; }
+  .skill-group-title { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .skill-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 13px; color: var(--gray-light); font-size: 13px; line-height: 1.5; transition: color 0.2s; }
+  .skill-item::before { content: ''; width: 4px; height: 4px; min-width: 4px; background: var(--gold-dim); border-radius: 50%; margin-top: 5px; }
+  .skill-item:hover { color: var(--white); }
+
+  /* CONTACT */
+  .contact { background: var(--deep); text-align: center; padding: 160px 64px; }
+  .contact-eyebrow { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold); margin-bottom: 24px; }
+  .contact-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(48px, 6.5vw, 88px); font-weight: 300; line-height: 1.02; margin-bottom: 28px; max-width: 720px; margin-left: auto; margin-right: auto; }
+  .contact-title em { font-style: italic; color: var(--gold); }
+  .contact-sub { font-size: 16px; color: var(--gray); max-width: 440px; margin: 0 auto 56px; line-height: 1.75; }
+  .contact-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .contact-link { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray-light); text-decoration: none; padding: 14px 28px; border: 1px solid var(--border); display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
+  .contact-link:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-glow); }
+
+  footer { background: var(--black); padding: 28px 64px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
+  .footer-text { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--gray); text-transform: uppercase; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  ::-webkit-scrollbar { width: 2px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+  @media (max-width: 1024px) {
+    .expertise-grid, .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    .project-card.featured-proj { grid-column: span 2; }
+    .skills-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; } nav.scrolled { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .hero { padding: 120px 24px 80px; }
+    .about-grid, .expertise-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured-proj { grid-column: span 1; }
+    .projects-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+    .github-link { margin-left: 0; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .hero-stats { gap: 28px; }
+    .article-card { padding: 40px 28px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">AY<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#expertise">Expertise</a></li>
+    <li><a href="#projects">Portfolio</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#writing">Writing</a></li>
+    <li><a href="https://glossy-bagel-982.notion.site/Ayush-Yuvraj-AI-Product-Strategy-Risk-Architecture-2ee75837b69080088e92ef4f6b4b00fa" target="_blank">Notion ↗</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">AI Product Leader · Financial Services · Enterprise AI</div>
+    <h1 class="hero-name">Ayush<br><em>Yuvraj</em></h1>
+    <p class="hero-subtitle">Building AI systems that operate at the intersection of decision intelligence, regulatory compliance, and enterprise scale — where the stakes are real and the margins for error are zero.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-number">10+</div><div class="stat-label">Years in FinTech AI</div></div>
+      <div class="stat"><div class="stat-number">30M+</div><div class="stat-label">Customers Served</div></div>
+      <div class="stat"><div class="stat-number">20</div><div class="stat-label">Engineers Led</div></div>
+      <div class="stat"><div class="stat-number">T1</div><div class="stat-label">Indian Banks</div></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#projects" class="btn-primary">View Portfolio</a>
+      <a href="#contact" class="btn-ghost">Let's Connect</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-grid">
+    <div>
+      <div class="section-label reveal">01 — About</div>
+      <h2 class="section-title reveal">The mind behind<br>the <em>machines</em></h2>
+      <div class="about-text">
+        <p class="reveal">I don't explain AI to stakeholders — I build it with engineers and ship it to 30 million banking customers. Over a decade in financial services, I've operated at the intersection where <strong>AI architecture decisions carry regulatory weight</strong> and real consequences.</p>
+        <p class="reveal reveal-delay-1">At KPMG, I lead a 20-person engineering team building AI-first products for India's Top-5 banks: regulatory compliance automation, real-time fraud detection, Gemini Vision KYC. Production systems — not pilots.</p>
+        <p class="reveal reveal-delay-2">My frame is <strong>AI Decision Intelligence</strong>: designing systems that augment expert judgment, know their own uncertainty, and hand control back to humans when it matters most.</p>
+      </div>
+    </div>
+    <div>
+      <div class="detail-item reveal"><span class="detail-key">Current Role</span><span class="detail-value">Manager, AI Products — KPMG India</span></div>
+      <div class="detail-item reveal reveal-delay-1"><span class="detail-key">Domain</span><span class="detail-value">Financial Services · RegTech · FinTech</span></div>
+      <div class="detail-item reveal reveal-delay-2"><span class="detail-key">Specialization</span><span class="detail-value">Agentic AI · RAG Systems · LLM Products</span></div>
+      <div class="detail-item reveal reveal-delay-3"><span class="detail-key">Team Scale</span><span class="detail-value">20 Engineers · 5 Direct Reports</span></div>
+      <div class="detail-item reveal reveal-delay-3"><span class="detail-key">GitHub</span><span class="detail-value"><a href="https://github.com/ayushyuvraj/AI-Product-Portfolio" target="_blank">AI-Product-Portfolio ↗</a></span></div>
+      <div class="detail-item reveal reveal-delay-3"><span class="detail-key">Notion</span><span class="detail-value"><a href="https://glossy-bagel-982.notion.site/Ayush-Yuvraj-AI-Product-Strategy-Risk-Architecture-2ee75837b69080088e92ef4f6b4b00fa" target="_blank">Strategy & Architecture ↗</a></span></div>
+      <div class="detail-item reveal reveal-delay-3"><span class="detail-key">LinkedIn</span><span class="detail-value"><a href="https://linkedin.com/in/ayushyuvraj" target="_blank">linkedin.com/in/ayushyuvraj ↗</a></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERTISE -->
+<section class="expertise" id="expertise">
+  <div class="section-label reveal">02 — Expertise</div>
+  <h2 class="section-title reveal">Where I operate<br>with <em>authority</em></h2>
+  <div class="expertise-grid">
+    <div class="expertise-card reveal">
+      <div class="expertise-num">01</div>
+      <div class="expertise-name">AI Decision Intelligence</div>
+      <div class="expertise-desc">Designing AI systems that augment expert judgment — not replace it. Knowing where AI adds precision and where human accountability is non-negotiable.</div>
+      <div class="expertise-tags"><span class="tag">Agentic AI</span><span class="tag">LLM Evaluation</span><span class="tag">Human-in-the-Loop</span></div>
+    </div>
+    <div class="expertise-card reveal reveal-delay-1">
+      <div class="expertise-num">02</div>
+      <div class="expertise-name">RAG Architecture</div>
+      <div class="expertise-desc">End-to-end RAG pipelines: hybrid BM25 + vector retrieval, cross-encoder re-ranking, citation enforcement, LLM-as-a-Judge evaluation at Faithfulness ≥ 0.94.</div>
+      <div class="expertise-tags"><span class="tag">Vector Search</span><span class="tag">BM25</span><span class="tag">LangChain</span><span class="tag">FAISS</span></div>
+    </div>
+    <div class="expertise-card reveal reveal-delay-2">
+      <div class="expertise-num">03</div>
+      <div class="expertise-name">AI Product Strategy</div>
+      <div class="expertise-desc">Translating complex regulated-environment business problems into AI roadmaps that stakeholders trust, regulators accept, and engineers can ship on schedule.</div>
+      <div class="expertise-tags"><span class="tag">PRDs</span><span class="tag">Roadmapping</span><span class="tag">GTM Strategy</span></div>
+    </div>
+    <div class="expertise-card reveal">
+      <div class="expertise-num">04</div>
+      <div class="expertise-name">Enterprise-Scale ML</div>
+      <div class="expertise-desc">Shipping AI that handles millions of daily banking transactions where uptime, latency, and accuracy are contractual — not aspirational.</div>
+      <div class="expertise-tags"><span class="tag">MLOps</span><span class="tag">Kafka</span><span class="tag">Redis</span><span class="tag">Monitoring</span></div>
+    </div>
+    <div class="expertise-card reveal reveal-delay-1">
+      <div class="expertise-num">05</div>
+      <div class="expertise-name">Responsible AI</div>
+      <div class="expertise-desc">Building AI for environments where wrong answers have regulatory, financial, and reputational consequences. Guardrails, hallucination mitigation, explainability.</div>
+      <div class="expertise-tags"><span class="tag">Guardrails</span><span class="tag">Explainability</span><span class="tag">Fairness</span></div>
+    </div>
+    <div class="expertise-card reveal reveal-delay-2">
+      <div class="expertise-num">06</div>
+      <div class="expertise-name">Engineering Leadership</div>
+      <div class="expertise-desc">20-person cross-functional teams. Agile transformation from 40% to 90%+ sprint predictability. Quarterly releases. Zero-downtime production banking systems.</div>
+      <div class="expertise-tags"><span class="tag">Team Building</span><span class="tag">OKRs</span><span class="tag">Agile</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- GITHUB PORTFOLIO -->
+<section class="projects" id="projects">
+  <div class="projects-header">
+    <div class="projects-header-text">
+      <div class="section-label reveal">03 — GitHub Portfolio</div>
+      <h2 class="section-title reveal" style="margin-bottom:0">Proof of work,<br>not just <em>strategy</em></h2>
+    </div>
+    <a href="https://github.com/ayushyuvraj/AI-Product-Portfolio" target="_blank" class="github-link reveal">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      View on GitHub →
+    </a>
+  </div>
+
+  <div class="projects-grid">
+
+    <!-- 01: Regulatory RAG — featured (spans 2) -->
+    <div class="project-card featured-proj reveal">
+      <div class="project-top">
+        <span class="project-num">01</span>
+        <span class="project-status status-live">🟢 Live Demo</span>
+      </div>
+      <div class="project-title">Regulatory Compliance Copilot</div>
+      <div class="project-desc">Production-grade RAG system for financial regulatory compliance. Ingests 500+ page RBI, SEBI, DPDP Act, and Basel III circulars. Hybrid BM25 + vector search with cross-encoder re-ranking. Strict citation enforcement — every output references a specific clause and document. LLM-as-a-Judge evaluation at Faithfulness ≥ 0.94 and Relevance ≥ 0.89. Designed for environments where a hallucinated interpretation is a compliance breach, not a bug.</div>
+      <div class="project-stack">
+        <span class="stack-tag">LangChain</span><span class="stack-tag">OpenAI</span><span class="stack-tag">FAISS</span><span class="stack-tag">Guardrails</span><span class="stack-tag">Evals</span><span class="stack-tag">Streamlit</span>
+      </div>
+      <div class="project-footer">
+        <span class="project-type">RAG · RegTech · LLM Evaluation</span>
+        <a href="https://ayush-fintech-copilot.streamlit.app/" target="_blank" class="project-link">Live Demo →</a>
+      </div>
+    </div>
+
+    <!-- 07: Gemini Vision KYC -->
+    <div class="project-card reveal reveal-delay-1">
+      <div class="project-top">
+        <span class="project-num">07</span>
+        <span class="project-status status-live">🟢 Live Demo</span>
+      </div>
+      <div class="project-title">Gemini Vision KYC</div>
+      <div class="project-desc">Identity verification system powered by Google Gemini 2.5 Flash. Multimodal document analysis with structured guardrails, automated logging, and evaluation pipelines. Built for regulated onboarding workflows where every decision must be auditable.</div>
+      <div class="project-stack">
+        <span class="stack-tag">Gemini 2.5 Flash</span><span class="stack-tag">Streamlit</span><span class="stack-tag">Guardrails</span><span class="stack-tag">Evals</span>
+      </div>
+      <div class="project-footer">
+        <span class="project-type">Vision AI · KYC · Compliance</span>
+        <a href="https://gemini-vision-kyc-ayush.streamlit.app/" target="_blank" class="project-link">Live Demo →</a>
+      </div>
+    </div>
+
+    <!-- 05: Fraud Detection -->
+    <div class="project-card reveal">
+      <div class="project-top">
+        <span class="project-num">05</span>
+        <span class="project-status status-live">🟢 Live Demo</span>
+      </div>
+      <div class="project-title">Real-Time Fraud Detection System</div>
+      <div class="project-desc">Distributed fraud detection with a live command center dashboard. Kafka event streaming and Redis caching for sub-100ms decisioning. System design reflects production-grade banking architecture, not a toy prototype.</div>
+      <div class="project-stack">
+        <span class="stack-tag">Kafka</span><span class="stack-tag">Redis</span><span class="stack-tag">Python</span><span class="stack-tag">Streamlit</span>
+      </div>
+      <div class="project-footer">
+        <span class="project-type">System Design · ML · Real-Time</span>
+        <a href="https://fraud-command-center-ayush.streamlit.app/" target="_blank" class="project-link">Live Demo →</a>
+      </div>
+    </div>
+
+    <!-- 04: Sentiment -->
+    <div class="project-card reveal reveal-delay-1">
+      <div class="project-top">
+        <span class="project-num">04</span>
+        <span class="project-status status-complete">✓ Complete</span>
+      </div>
+      <div class="project-title">Customer Sentiment Pulse</div>
+      <div class="project-desc">Real-time customer sentiment analysis using DistilBERT fine-tuned for financial services language. Surfaces emerging product issues before they escalate to complaints — early warning layer for product teams.</div>
+      <div class="project-stack">
+        <span class="stack-tag">HuggingFace</span><span class="stack-tag">Transformers</span><span class="stack-tag">DistilBERT</span>
+      </div>
+      <div class="project-footer">
+        <span class="project-type">NLP · Analytics · FinTech</span>
+        <a href="https://github.com/ayushyuvraj/AI-Product-Portfolio/tree/master/04_Customer_Sentiment_Pulse" target="_blank" class="project-link">View Code →</a>
+      </div>
+    </div>
+
+    <!-- 02: SQL Bridge -->
+    <div class="project-card reveal reveal-delay-2">
+      <div class="project-top">
+        <span class="project-num">02</span>
+        <span class="project-status status-complete">✓ Complete</span>
+      </div>
+      <div class="project-title">Text-to-SQL Data Bridge</div>
+      <div class="project-desc">Natural language to SQL for enterprise banking data. Removes engineering dependency for compliance and risk teams who need to query structured data without writing SQL. Built on LangChain with financial domain tuning.</div>
+      <div class="project-stack">
+        <span class="stack-tag">LangChain</span><span class="stack-tag">SQL</span><span class="stack-tag">OpenAI</span>
+      </div>
+      <div class="project-footer">
+        <span class="project-type">NLP · Data Access · Enterprise</span>
+        <a href="https://github.com/ayushyuvraj/AI-Product-Portfolio/tree/master/02_SQL_Data_Bridge" target="_blank" class="project-link">View Code →</a>
+      </div>
+    </div>
+
+    <!-- 03: Google Pay Strategy -->
+    <div class="project-card reveal reveal-delay-3">
+      <div class="project-top">
+        <span class="project-num">03</span>
+        <span class="project-status status-strategy">◈ Strategy PRD</span>
+      </div>
+      <div class="project-title">Google Pay AI Strategy</div>
+      <div class="project-desc">Full product strategy PRD: AI-powered features for Google Pay's next growth phase. User segmentation, GTM strategy, success metrics, product vision. Written to demonstrate Google-context product thinking from first principles.</div>
+      <div class="project-stack">
+        <span class="stack-tag">Product Vision</span><span class="stack-tag">PRD</span><span class="stack-tag">Growth</span><span class="stack-tag">Payments</span>
+      </div>
+      <div class="project-footer">
+        <span class="project-type">Strategy · Google · Product</span>
+        <a href="https://github.com/ayushyuvraj/AI-Product-Portfolio/tree/master/03_Google_Pay_Strategy" target="_blank" class="project-link">View PRD →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="experience" id="experience">
+  <div class="section-label reveal">04 — Experience</div>
+  <h2 class="section-title reveal">10 years of decisions<br>that <em>mattered</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">2021 — Present</div>
+      <div class="timeline-role">Manager, AI Products</div>
+      <div class="timeline-company"><span>KPMG India</span> · Financial Services</div>
+      <div class="timeline-achievements">
+        <div class="achievement">Led 20-person engineering team building AI-first products for India's Top-5 banks — regulatory compliance automation, real-time fraud detection, and identity verification systems serving 30M+ customers.</div>
+        <div class="achievement">Deployed production RAG compliance engine with Faithfulness ≥ 0.94 and mandatory source attribution — built to pass regulatory audit, not just internal review.</div>
+        <div class="achievement">Shipped Gemini Vision KYC with automated evaluation and guardrails infrastructure designed from day one, not retrofitted.</div>
+        <div class="achievement">Drove Agile transformation across three product squads: sprint predictability from 40% to 90%+ in under 6 months.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">2018 — 2021</div>
+      <div class="timeline-role">Senior Product Manager</div>
+      <div class="timeline-company"><span>Financial Services</span> · India</div>
+      <div class="timeline-achievements">
+        <div class="achievement">Owned product roadmap for core banking AI features serving millions of retail customers across India.</div>
+        <div class="achievement">Introduced data-driven product discovery — user research frameworks, experiment design, and metric definition for AI-powered features in a regulated environment.</div>
+        <div class="achievement">Partnered with risk and compliance to define model governance standards for ML-powered credit decisioning.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">2014 — 2018</div>
+      <div class="timeline-role">Product Manager</div>
+      <div class="timeline-company"><span>Financial Services</span> · India</div>
+      <div class="timeline-achievements">
+        <div class="achievement">Built foundational product capabilities in high-stakes financial services environments — from requirements to delivery in complex regulated settings.</div>
+        <div class="achievement">Led cross-functional teams across engineering, risk, compliance, and operations to ship customer-facing features at enterprise scale.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WRITING -->
+<section class="writing" id="writing">
+  <div class="section-label reveal">05 — Thought Leadership</div>
+  <h2 class="section-title reveal">Writing that moves<br>the <em>conversation</em></h2>
+  <div class="article-card reveal">
+    <div class="article-eyebrow">Featured Article · LinkedIn</div>
+    <div class="article-title">Why I Chose RAG Over Fine-Tuning for Enterprise Compliance AI</div>
+    <div class="article-excerpt">When we set out to build an AI-powered regulatory compliance engine for a Tier-1 bank, the first architectural decision wasn't which LLM to use — it was a more fundamental question: should the system learn the regulations, or look them up every time? Getting it wrong would have cost us months, credibility, and in a regulated environment, potentially our client's operating license. Here's how we made the call, the real trade-offs in production, and what I'd reconsider today.</div>
+    <a href="https://linkedin.com/in/ayushyuvraj" target="_blank" class="article-link">Read on LinkedIn →</a>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills" id="skills">
+  <div class="section-label reveal">06 — Skills</div>
+  <h2 class="section-title reveal">The full stack of<br><em>capabilities</em></h2>
+  <div class="skills-grid">
+    <div class="reveal">
+      <div class="skill-group-title">AI / ML</div>
+      <div class="skill-item">Large Language Models (LLMs)</div>
+      <div class="skill-item">RAG Systems & Vector Search</div>
+      <div class="skill-item">Agentic AI & Multi-step Reasoning</div>
+      <div class="skill-item">Fine-tuning & PEFT / LoRA</div>
+      <div class="skill-item">LLM Evaluation (RAGAS)</div>
+      <div class="skill-item">Multimodal AI (Gemini)</div>
+      <div class="skill-item">Prompt Engineering</div>
+      <div class="skill-item">Guardrails & Safety</div>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <div class="skill-group-title">Technical</div>
+      <div class="skill-item">Python · LangChain · LlamaIndex</div>
+      <div class="skill-item">FAISS · Pinecone · Weaviate</div>
+      <div class="skill-item">HuggingFace Transformers</div>
+      <div class="skill-item">Kafka · Redis</div>
+      <div class="skill-item">OpenAI · Gemini 2.5 APIs</div>
+      <div class="skill-item">SQL · Data Pipelines</div>
+      <div class="skill-item">MLOps · Model Monitoring</div>
+      <div class="skill-item">Streamlit · Cloud Deployment</div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="skill-group-title">Product</div>
+      <div class="skill-item">AI Product Strategy</div>
+      <div class="skill-item">PRD & Roadmap Design</div>
+      <div class="skill-item">User Research & Discovery</div>
+      <div class="skill-item">Experiment Design & A/B Testing</div>
+      <div class="skill-item">Metrics Definition & OKRs</div>
+      <div class="skill-item">Go-to-Market Strategy</div>
+      <div class="skill-item">Stakeholder Management</div>
+      <div class="skill-item">Agile / Scrum Leadership</div>
+    </div>
+    <div class="reveal reveal-delay-3">
+      <div class="skill-group-title">Domain</div>
+      <div class="skill-item">Regulatory Compliance (RBI/SEBI)</div>
+      <div class="skill-item">DPDP Act · Basel III</div>
+      <div class="skill-item">Real-time Fraud Detection</div>
+      <div class="skill-item">KYC / Identity Verification</div>
+      <div class="skill-item">Credit Risk & ML Decisioning</div>
+      <div class="skill-item">Core Banking Systems</div>
+      <div class="skill-item">Payments (UPI · Google Pay)</div>
+      <div class="skill-item">Model Governance & Audit</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-eyebrow">07 — Let's Talk</div>
+  <h2 class="contact-title">Ready to build<br>what's <em>next</em></h2>
+  <p class="contact-sub">Exploring AI Product leadership roles where the problems are hard, the stakes are real, and the bar is exceptional.</p>
+  <div class="contact-links">
+    <a href="https://linkedin.com/in/ayushyuvraj" target="_blank" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+      LinkedIn
+    </a>
+    <a href="https://github.com/ayushyuvraj/AI-Product-Portfolio" target="_blank" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      GitHub
+    </a>
+    <a href="https://glossy-bagel-982.notion.site/Ayush-Yuvraj-AI-Product-Strategy-Risk-Architecture-2ee75837b69080088e92ef4f6b4b00fa" target="_blank" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg>
+      Notion
+    </a>
+    <a href="https://ayush-fintech-copilot.streamlit.app/" target="_blank" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Live Demo
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-text">© 2026 Ayush Yuvraj</span>
+  <span class="footer-text">AI Product Leader · KPMG India</span>
+  <span class="footer-text">ayushyuvraj.com</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function anim() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(anim);
+  })();
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => { ring.style.transform = 'translate(-50%,-50%) scale(1.7)'; ring.style.borderColor = 'rgba(201,168,76,0.8)'; });
+    el.addEventListener('mouseleave', () => { ring.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.borderColor = 'rgba(201,168,76,0.5)'; });
+  });
+
+  // Sticky nav
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal, .timeline-item').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
